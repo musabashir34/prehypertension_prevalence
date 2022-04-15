@@ -1,0 +1,26 @@
+study_id,study-year,settlement,state,region,prehtn_count,sample_sz,age
+Isezuo,2011,urban,sokoto,north_west,232,389,38.9
+Isezuo,2011,rural,sokoto,north_west,227,393,38.9
+Umuerri,2020,urban,delta,south_south,205,475,39.1
+Umuerri,2020,rural,delta,south_south,157,377,47.1
+Nwatu,2017,rural,enugu,south_east,287,824,51.1
+Suleiman,2013,urban,bayelsa,south_south,94,400,NA
+Kooffreh,2016,urban,cross river,south_south,118,300,34.7
+Andy,2012,rural,mixed,south_south,664,3869,34.3
+Raimi,2020,rural,ogun,south_west,138,412,44.6
+Odili,2020,urban,mixed,mixed,438,2018,46.7
+Odili,2020,rural,mixed,mixed,365,2174,46.7
+Tagurum,2015,rural,plateu,north_central,41,195,47.5
+Oladoyinbo,2015,urban,ogun,south_west,89,300,39
+Ganiyu,2014,rural,delta,south_south,271,500,39.2
+Olamoyegun,2016,urban,ekiti,south_west,218,750,61.7
+Abu-Saeed,2014,urban,kwara,north_central,134,270,NA
+Okpechi,2013,urban,abia,south_east,368,1396,41.7
+Okpechi,2013,rural,abia,south_east,375,1587,41.7
+Obiebi,2019,urban,delta,south_south,148,296,38.7
+Opreh,2021,rural,osun,south_west,367,1012,47.7
+Upla,2020,rural,nasarawa,north_central,56,299,NA
+Okubadejo,2019,urban,lagos,south_west,2166,5365,37.6
+Charles-Davies,2013,urban,ibadan,south_west,197,534,NA
+Ajayi,2016,urban,ibadan,south_west,280,806,38.8
+Okafor,2011,urban,enugu,south_east,324,898,48.7

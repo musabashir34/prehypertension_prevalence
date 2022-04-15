@@ -1,0 +1,315 @@
+---
+title: 'Prevalence of Prehypertension in Nigeria: a Systematic Review and Meta-analysis'
+author: 'M. A. Bashir^1,\*^ , A. I. Yahaya^1^, Mukhtar Muhammad^1^, A.H. Yusuf^1^'
+date: '`r Sys.Date()`'
+output:
+  bookdown::word_document2:
+    reference_docx: article_ref.docx
+bibliography: ref.bib
+always_allow_html: true
+csl: vancouver-superscript.csl
+nocite: '@*'
+---
+    
+
+^1^Department of Anatomy\
+Bayero University Kano\
+\*Author of Correspondence, Email: [musabashir34\@gmail.com](mailto:musabashir34@gmail.com){.email}, GSM: +2347036878467        
+        
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, dpi = 300)
+library(bookdown)
+library(flextable)
+library(ggplot2)
+library(tidyverse)
+library(ggpubr)
+library(scales)
+library(ggExtra)
+library(metafor)
+library(meta)
+library(metaviz)
+library(sf)
+library(patchwork)
+library(metagear)
+nigeria_data<-st_read('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\nig.geojson')
+regions<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\states.csv')
+nigeria_data<-rename(nigeria_data, states=admin1Name)
+nigeria_data<-left_join(nigeria_data, regions)
+data_settl<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\phtn_prev_settl.csv')
+data_xy<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\phtn_prev_gender.csv')
+data_reg<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\phtn_prev_reg.csv')
+data_numb<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\number_stud.csv')
+data0<-data_numb %>% group_by(region, settlement) %>% summarize(number = n()) %>% ungroup()
+data0<-data0 %>% mutate(numb= ifelse(settlement=='urban', number, -1*number))
+cal_xy<-escalc(measure = 'PAS', xi = prehtn_count, ni= sample_sz, data = data_xy, append = TRUE)
+data_cal<-escalc(measure = 'PAS', xi = prehtn_count, ni= sample_sz, data = data_settl, append = TRUE)
+model_1<-rma.uni(data = data_cal, yi, vi, digits = 3, method ='SJ')
+data_cal_reg<-escalc(measure = 'PAS', xi = prehtn_count, ni= sample_sz, data = data_reg, append = TRUE)
+model_2<-rma.uni(data = data_cal_reg, yi, vi, mods= ~factor(region)-1, digits = 3, method = 'SJ')
+model_2_v<-rma.uni(data = data_cal, yi, vi, mods= ~factor(region), digits = 3, method = 'SJ')
+model_2_coefs<-data.frame(transf.iarcsin(model_2$beta))
+map_text<-model_2_coefs %>% mutate(text= paste0(round(transf.iarcsin.model_2.beta.*100, digits = 0), '%'))
+data_tidy_ur<-data_settl %>% filter(!settlement=='mixed')
+data_cal_tidy_ur<-escalc(measure = 'PAS', xi = prehtn_count, ni= sample_sz, data = data_tidy_ur, append = TRUE) 
+model_3<-rma.uni(data = data_cal_tidy_ur, yi, vi, mods= ~factor(settlement)-1, digits = 3, method = 'SJ')
+model_3_v<-rma.uni(data = data_cal_tidy_ur, yi, vi, mods= ~factor(settlement), digits = 3, method = 'SJ')
+model_4<-rma.uni(data = cal_xy, yi, vi, mods= ~factor(gender)-1, digits = 3, method = 'SJ')
+model_4_v<-rma.uni(data = cal_xy, yi, vi, mods= ~factor(gender), digits = 3, method = 'SJ')
+sex<-confint.rma.uni(model_4, transf = transf.iarcsin, fixed = TRUE, random = FALSE)
+sex<-data.frame(sex$fixed)
+data_1<-data_reg %>% group_by(region) %>% summarize(sample_size = sum(sample_sz), mean_age= mean(age, na.rm= TRUE))
+```
+    
+ABSTRACT        
+*Prehypertension is a borderline blood pressure status associated with both higher incidence of cardiovascular disease as well as higher risk of progression to hypertension. The rising burden of hypertension and prehyperension  globally is a serious concern to all and sundry. This study aims to estimate the burden of prehypertension in Nigeria. Online searches of Google Scholar, PubMed and African Index Medicus were conducted and studies selected based on predefined criteria. `r n_distinct(data_settl$study_id)` studies consisting of `r sum(data_settl$sample_sz)` individuals conducted between `r min(data_settl$study.year)` and `r max(data_settl$study.year)` were included in the meta-analysis. The pooled prevalence of prehypertension in Nigeria was found to be `r round((transf.iarcsin(model_1$beta)), digits = 2)*100`%        
+(95% CI: `r round((transf.iarcsin(model_1$ci.lb)), digits = 2)*100`%-`r round((transf.iarcsin(model_1$ci.ub)), digits = 2)*100`%) translating to `r round(transf.iarcsin(model_1$beta)*120, digits = 1)` million adult Nigerians. Males have higher prehypertension prevalence of `r round(sex[2,1]*100, digits = 1)`% (95% CI: `r round(sex[2,2]*100, digits = 1)`%-`r round(sex[2,3]*100, digits = 1)`%) than females with prevalence of `r round(sex[1,1]*100, digits = 1)`% (95% CI: `r round(sex[1,2]*100, digits = 1)`%-`r round(sex[1,3]*100, digits = 1)`%). Differences between sexes are not statistically significant. The region with the lowest prehypertension prevalence is North-East at `r map_text[2, 2]`. The region with the highest prevalence of prehypertension is North-West at `r map_text[3, 2]`. Differences between the regions are statistically significant. The pooled prevalence in rural settlements is `r round((transf.iarcsin(model_3$beta[1, ])), digits = 2)*100`% whereas the pooled prevalence for urban settlements is `r round((transf.iarcsin(model_3$beta[2, ])), digits = 2)*100`%. Differences rural and urban settlements were not statistically significant. In conclusion, the burden of prehypertension in Nigeria is high and represents a future burden of hypertension and other cardiovascular diseases*
+    
+        
+**Keywords**: Prehypertension, Prevalence, Nigeria        
+        
+# INTRODUCTION
+
+Hypertension is an abnormally raised blood pressure. The risk of cardiovascular diseases increases in a log-linear fashion from systolic blood pressure 115mmHg and diastolic blood pressure of 75mmHg with a doubling in risk of cardiovascular-related death doubling for each 20mmHg and 10mmHg increase in systolic and diastolic blood pressures respectively [@whelton2017ACCAHA2018a]. Despite this continuous risk of rising blood pressure, defining a cut-off value is important to set a threshold of action in for both clinical and public health interventions. @nationalhighbloodpressureeducationprogramSeventhReportJoint2004 defined this threshold as systolic blood pressure of 140mmHg and/or diastolic blood pressure of 90mmHg.        
+    
+Since the association between blood pressure and cardiovascular risk is continous, it is only logical to define other low-level blood pressure thresholds to alert both clinicians and public health officials to institute low-level interventions to mitigate the cardiovacular risk. Prehypertension (PHTN) is such a category. It is a borderline high-risk blood pressure status defined as systolic Blood Pressurev(BP) of 120-139mmHg and/or diastolic BP of 80-89mmHg[@nationalhighbloodpressureeducationprogramSeventhReportJoint2004]. Prehypertension is associated with about fourfold increased risk of developing hypertension compared to normotensive individuals with 10% annualized progression rate to hypertension[@vasanAssessmentFrequencyProgression2001]. In addition to this high risk of conversion to hypertension, prehypertension is associated with 200% increase in cardiovascular disease incidence compared to blood pressure less than 120/80mmHg[@nationalhighbloodpressureeducationprogramSeventhReportJoint2004].         
+
+There is worldwide increase in the burden of high blood pressure. In a pooled analysis of 1479 studies from 174 countries including 19.1 million participants, there were 594 million people with high blood pressure in 1975. This number increased to 1.13 billion people in 2015 with the increase largely in developing countries. Eighty eight percent (88%) of mortality attributable to high BP is now in developing countries [@ncdriskfactorcollaborationncd-riscWorldwideTrendsBlood2017].         
+In a meta-analysis of 242 322 individuals from 11 countries including Nigeria, prevalence of prehypertension was 38% [@guoPrevalenceHeterogeneityPrehypertension2012]. In a recent meta-analysis of 9 studies conducted in Nigeria between 1995 to 2020 and consisting of 16, 241 individuals, the prevalence of prehypertension was found to be 30.9% (95% CI: 22.0-39.7). However, the analysis involved studies conducted in only 4 of the 6 geo-political zones of the country. In addition, no sex-specific prevalence of prehypertension was reported. [@adeloyePrevalenceAwarenessTreatment2021]. This study aims to determine the sex-specific prevalence of prehypertension across the 6 geo-political zones as well as in urban and rural settlements of Nigeria. 
+    
+# METHODOLOGY       
+    
+## Study Area       
+    
+Nigeria is a western African nation with an area of 923,769 sq km, home to more than 250 ethnic groups[@udoNigeria2020]. It has 36 states and a capital divided into 6 geo-political zones or regions. The estimated population in 2021 is 211.4 million. About 43.4% of the population are under the age of 14 years. Also 53.9% of the population are between the ages of 15 and 64 years. Only 2.8% of the population are above the age of 65 years [@unfpa-unitednationspopulationfundUNFPAUnitedNations2021]. Figure \@ref(fig:zones) shows the map of the geopolitical zones of the country.    
+    
+
+```{r zones, fig.cap='Geo-Political Zones in Nigeria'}
+ggplot()+geom_sf(mapping = aes(fill=region, color=region), data = nigeria_data)+theme_bw()+scale_fill_discrete(name= 'Regions', labels= c('North-Central', 'North-East', 'North-West', 'South-East', 'South-South', 'South-West'))+scale_color_discrete(name= 'Regions', labels= c('North-Central', 'North-East', 'North-West', 'South-East', 'South-South', 'South-West'))+ labs(caption = 'Simple Features File Source: Humanitarian Data Exchange (2020)')
+```
+            
+## Inclusion and Exclusion Criteria       
+        
+We included community-based studies conducted in adult population (greater than 18 years of age) of Nigeria. Studies selected defined prehypertension as systolic Blood Pressure(BP) of 120-139mmHg and/or diastolic BP of 80-89mmHg. We excluded studies conducted in individuals less than 18 years of age, studies on pregnant women and all hospital-based studies.        
+            
+## Studies Search Strategies        
+    
+Online databases used were Google Scholar, PubMed, Global and African Index Medicus. Search words and phrases used were: 'prehypertension', 'pre-hypertension' and 'hypertension'.Searches were repeated for each word with the name 'Nigeria'. Searches were conducted between 4rth March 2021 to 15th March 2021. Screening of the abstracts and titles of the articles was done independently by two reviwers (MAB and MM) and studies selection and exclusion done based on the predefined criteria. Thereafter, screening of the full-text articles was done independently by the same researches to select the studies to be included in qualitative and quantitative analyses.        
+
+## Qualitative Analysis of the Included Studies         
+    
+The methodological quality of the included studies was assessed using a modification of the  Joanna Briggs Institute (JBI) Critical Appraisal Checklist for Studies Reporting Prevalence Data[@joannabriggsinstituteJoannaBriggsInstitute2017]. The item's original 9 questions were reduced to six (6) with each question given a score of one (1) for a 'yes' and zero (0) for a 'no'. The total maximum score is six. A study was judged as good quality if it scored minimum of five (5) and of poor quality if it scores less than five (5). Assessment was done independently by two reviewers (AIH and MM) with disagreements sorted by AHY. Table \@ref(tab:check) shows the modified tool used in critical appraisal of the included studies. The minimum sample size for scoring a study as a 'yes' was three hundered and twenty three (323) calculated using Epitools online calculator[@epitoolsEpitoolsSampleSize] assuming an estimated prevalence of 30% based on a recent meta-analysis of studies conducted in Nigeria[@adeloyePrevalenceAwarenessTreatment2021]. Only studies judged as having high methodological quality were included in the quantitative analysis.     
+    
+```{r check, tab.cap= 'Critical Appraisal Checklist'}
+ck<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_Nigeria\\appraisal_checklist.csv')
+## autofit(flextable(ck))
+```
+    
+                    
+## Data Extraction and Quantitative Analysis    
+        
+Data Extraction was independently done by two reviewers (MAB and AHY). Extracted information from the studies included prevalence of prehypertension, sample size, settlement (urban/rural), state and region of the study, study year, mean age and sex composition of the study participants. Data was entered into Excel and then imported into R statistical environment for statistical computing, version 4.1.0 [@rcoreteamLanguageEnvironmentStatistical2021]. 
+    
+Metafor Package [@viechtbauerConductingMetaanalysesMetafor2010] was used to fit Random Effects Model for pooling prevalences and Mixed Effects Model for meta-regression using inverse variance method with correction of pooled estimate and its variance using Sidik-Jonkman's estimator for between study heterogeneity [@sidikConstructingConfidenceIntervals2003].       
+        
+### Influence and Heterogeneity Analyses        
+    
+The investigation of heterogeneity was done in three levels. At first level, individuals studies were investigated for influencers defined as follows:          
+
+1. Based  on hat value, which is standardized distance of each study's reported prevalence from the pooled prevalence,        
+
+1. Based on rstudent, which is standardized distance of the predicted prevalence for each study from the pooled prevalence               
+
+1. Based on Cook's distance, which is the distance between the pooled prevalence when the individual study is included and when it is excluded and               
+
+1. Based difference in fits(diffits) which is also a distance between pooled prevalence with the study included and when the study is excluded but in standard deviation units. Cut off values implemented in the R metafor package were adopted. Influential studies according to these cut-off values were marked red in the generated influence plots  [@viechtbauerOutlierInfluenceDiagnostics2010].                
+
+On a second level, gosh analysis, also implemented in metafor package, was done to explore possible clusters in the included studies.         
+
+On  a third level, metaregression model, using characteristics of the included studies as predictors, was fitted to investigate the extent to which the calculated heterogeneity is attributed to the study-level characteristics such as the sex composition, geo-political region, settlement, mean age of the subjects and sample size.       
+    
+Prediction Intervals implemented in meta R package[@balduzziHowPerformMetaanalysis2019] were reported to overcome the difficulties in interpreting both tau^2^ and I^2^ as measures of between study heterogeneity[@borensteinBasicsMetaanalysisNot2017].    
+    
+### Publication Bias Assessment       
+    
+Funnel plot was used to visually inspect for possible publication bias where studies reporting small prevalence were not published and thus not included in the meta-analysis. Formal regression test by Eggar and colleagues[@eggerBiasMetaanalysisDetected1997] was employed for testing funnel plot asymmetry.     
+    
+## Search Results               
+        
+Figure \@ref(fig:prisma) shows the results of the search strategy.     
+            
+```{r prisma, fig.cap= 'Results of the Search'}
+# phases <- c("START_PHASE: # of studies identified through database searching 2931",
+       #     "START_PHASE: # of additional studies identified through other sources 0",
+        #    "# of studies after duplicates removed 2906",
+         #   "# of studies with title and abstract screened 2906",
+          #  "EXCLUDE_PHASE: # of studies excluded 2765",
+           # "# of full-text articles assessed for eligibility 141",
+            #"EXCLUDE_PHASE: # of full-text excluded, not fitting eligibility criteria 78",
+            #"# of studies included in qualitative synthesis 63",
+            #"EXCLUDE_PHASE: # studies excluded, poor quality 42",
+            #"final # of studies included in quantitative synthesis (meta-analysis) 21")
+# plot_PRISMA(phases, design = "cinnamonMint")
+```                
+            
+# RESULTS       
+            
+## Methodological features and the Critical Appraisal of the Included Studies       
+    
+```{r included, tab.cap= ' Critical Appraisal of the Included Studies'}
+qa<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_Nigeria\\Quality_Appraisal.csv')
+# autofit(flextable(qa))
+
+```
+    
+Out of the `r nrow(qa)` included in the qualitative analysis, only `r qa %>% filter(Quality=='Good') %>% nrow()` were judged of good quality and included in the quantitative analysis. Table \@ref(tab:included) shows the result of the qualitative analysis.           
+
+## Characteristics of the Studies Included in the Quantitative Analysis     
+
+`r n_distinct(data_settl$study_id)` studies consisting of `r sum(data_settl$sample_sz)` individuals met the inclusion criteria and have good enough methodological quality to be included in the meta-analysis. The studies were conducted between `r min(data_settl$study.year)` and `r max(data_settl$study.year)`. There were `r data0[9,3]+data0[10, 3]` studies from the south-west region, `r data0[7, 3]+data0[8, 3]` studies from the south-south, `r data0[5,3]+data0[6, 3]` studies from south-east, `r data0[2,3]+data0[3, 3]` studies from the north-central, `r data0[4, 3]` study from the north-west and `r data0[1, 3]` study conducted in all the six (6) regions. `r data0 %>% filter(settlement=='rural') %>% select(number) %>% sum()` studies were conducted in the rural areas, `r data0 %>% filter(settlement=='urban') %>% select(number) %>% sum()` studies in urban areas and `r data0 %>% filter(settlement=='urban + rural') %>% select(number) %>% sum()` study way conducted in both rural and urban areas and the authors did not report separate data for the two settlements.\
+The reported mean age of the studies' subjects ranged from `r round(min(data_1$mean_age, na.rm = TRUE), digits= 0)`in  south-south studies to `r round(max(data_1$mean_age, na.rm = TRUE), digits= 0)` in a south-east studies. South-west has the largest number of participants included in the analysis (`r data_1[6, 2]`) and the north-east has the least number of participants(`r data_1[2, 2]`). Studies from the southern regions of the country are, in general, larger in size and have older subjects. (Figure \@ref(fig:raw) and Figure \@ref(fig:raw2))
+        
+```{r raw, fig.cap= 'Number of Included Studies by Region and Settlement'}
+breaks0<-pretty(data0$numb)
+x<-ggplot(data0, aes(y=fct_reorder(region, numb), x= numb, color= settlement))+geom_point(size=8)
+x<-x+geom_segment(data= data0, aes(y=fct_reorder(region, numb), yend=region, x=0, xend= numb))
+x<-x+geom_vline(xintercept = 0)+ scale_x_continuous(limits= c(-8, 22), name = 'Number of Studies', breaks = breaks0, labels = abs(breaks0))+ scale_y_discrete(name= 'Regions')+
+  geom_text(aes(label=abs(numb)), color= 'black')+theme_classic()+labs(title = 'Settlement', color= 'settlement')+guides(color=guide_legend(reverse = TRUE))+theme(legend.position = 'top')
+mage<-round(mean(data_reg$age, na.rm = TRUE), digits= 0)
+msize<-round(mean(data_1$sample_size, na.rm = TRUE), digits= 0)
+x1<-ggplot(data_1, aes(y=fct_reorder(region, mean_age), x= mean_age, color= mean_age>mage))+geom_point(size=8)
+x1<-x1+geom_segment(data= data_1, aes(y=fct_reorder(region, mean_age), yend=region, x=44, xend= mean_age), size=2)
+x1<-x1+geom_vline(xintercept = 44)+geom_text(aes(label=round(mean_age, digits = 0)), color= 'black')+theme_classic()
+x1<-x1+labs(title = 'Age', x= 'average age', y= 'Regions')+theme(legend.position ='none')+scale_x_continuous(limits= c(35, 50))
+x2<-ggplot(data_1, aes(y=fct_reorder(region, sample_size), x= sample_size, color= sample_size>msize))+geom_point(size=8)
+x2<-x2+geom_segment(data= data_1, aes(y=fct_reorder(region, sample_size), yend=region, x=4306, xend= sample_size))
+x2<-x2+geom_vline(xintercept = 4306, size=0.5)+theme_classic()
+x2<-x2+labs(title = 'studies size', x= 'individuals in the studies', y= 'Regions')+theme(legend.position ='none')+scale_x_continuous(limits= c(-200, 15000))
+x
+```
+    
+```{r raw2, fig.cap='Mean Age and Number of Subjects in the Included Studies by Region'}
+ggarrange(x1, x2, labels = 'AUTO')
+```
+        
+            
+## Fitting the Meta Analytic Model                
+    
+Random Effects Model was fitted using inverse variance method with correction of pooled estimate and its variance using Sidik-Jonkman's estimator for between study heterogeneity. Prevalences were tranformed using arcsine transformation. Figure \@ref(fig:model1) shows the forest plot of the model.    
+    
+```{r model1, fig.cap='forest plot'}
+rainforest(model_1, study_labels = data_cal$study_id, summary_name= 'Summary(Random Effects)', xlab= 'Prevalence', x_trans_function = transf.iarcsin, text_size = 2.3, annotate_CI = TRUE, summary_col = 'Greens')
+predi_intvl<-metaprop(data=data_reg, event= prehtn_count, n= sample_sz, method = 'Inverse', method.tau = 'SJ', sm='PAS', backtransf = TRUE, prediction = TRUE)
+```
+    
+        
+The overall pooled prevalence of prehypertension in Nigeria is `r round((transf.iarcsin(model_1$beta)), digits = 2)*100`% (95% CI: `r round((transf.iarcsin(model_1$ci.lb)), digits = 2)*100`%-`r round((transf.iarcsin(model_1$ci.ub)), digits = 2)*100`%). According to the latest data by United Nations @unfpa-unitednationspopulationfundUNFPAUnitedNations2021, this translates to estimated `r round(transf.iarcsin(model_1$beta)*120, digits = 1)` million adult prehypertensive individuals in Nigeria. The *P* value for the random meta analytic model is `r pvalue(model_1$pval)`. The estimated total between studies heterogeneity(tau^2^) = `r round(model_1$tau2, digits= 2)`(S.E = `r round(model_1$se.tau2, digits = 3)`). Percentage of between study heterogeneity not explained by the sampling error (I^2^) is `r round(model_1$I2, digits= 1)`%. Test for Heterogenity showed Q(df= `r model_1$k-model_1$p`) = `r signif((model_1$QE), 3)`, p-value`r pvalue(model_1$QEp)` indicating substantial heterogeneity between the included studies. The more intuitive prediction interval generated from R package meta was from `r round((transf.iarcsin(predi_intvl$lower.predict)), digits = 2)*100`% to `r round((transf.iarcsin(predi_intvl$upper.predict)), digits = 2)*100`%. This range represents the possible values of prehypertension prevalence future studies in Nigeria can find.            
+    
+## Analysis of Between Study Heterogeneity    
+            
+### Outliers and Influencers           
+    
+To explain the substantial heterogeneity, an exploration of possible outliers and influencers was carried out. Figure \@ref(fig:radial) shows radial plot of the model with no obvious outlier. This is confirmed by the influence analysis plots in figure \@ref(fig:influence).    
+    
+```{r radial, fig.cap= 'radial plot of the model'}
+radial.rma(model_1, back = 'blue', xlab = 'studies weights', zlab = 'prevalences')
+```
+
+```{r influence, fig.cap= 'Influence analysis of the model'}
+plot.infl.rma.uni(influence.rma.uni(model_1), plotinf = c(1, 2, 7, 3), layout = c(2,2), bg='green')
+``` 
+        
+### Gosh Analysis           
+    
+The possibility of clusters within the included studies was explored through Gosh analysis implemented in metafor R package. Figure \@ref(fig:gosh) reveals no clusters. The included studies formed indeed a single cluster with substantial heterogeneity.     
+    
+```{r gosh, fig.cap= 'Gosh Plot'}
+# data_gosh<-gosh(model_1)
+# plot(data_gosh, alpha= 0.1, col = "blue")
+```
+    
+### Meta-regression using Studies Characteristics as Predictors         
+    
+    
+```{r}
+hetero<-rma.uni(data = cal_xy,yi, vi, measure = 'PAS', mods = ~factor(gender)+factor(region)+factor(setting)+age +sample_sz )
+m<-data.frame(predictor=c( 'region', 'region', 'all predictors', 'all predictors'), heterogeneity_measure = c('tau-squared', 'I-squared','tau-squared', 'I-squared'))
+n<-data.frame(perc_change =c((model_1$tau2-model_2_v$tau2)/model_1$tau2, (model_1$I2-model_2_v$I2)/model_1$I2, (model_1$tau2-hetero$tau2)/model_1$tau2, (model_1$I2-hetero$I2)/model_1$I2))
+n<-n %>% mutate(perc_change= round(perc_change*100, digits = 0))
+m<-bind_cols(m, n)             
+```
+    
+A meta-regression model was fitted using gender, geo-political region, settlement, mean age and sample size of the included studies. The value of tau^2^ dropped from `r round(model_1$tau2, digits = 3)` in the model without the predictors to `r round(hetero$tau2, digits = 3)` ( a `r round(((model_1$tau2-hetero$tau2)/model_1$tau2)*100, digits=0)`% drop). The change in I^2^ is equally dramatic from `r round(model_1$I2, digits = 1)`%, signifying substantial heterogeneity, to `r round(hetero$I2, digits = 1)`% indicating moderate heterogeneity. This means most of the heterogeneity between the studies results from the differences in study characteristics.  The relative changes in the two heterogeneity measures after fitting the meta-regression models is shown in Figure \@ref(fig:hetphtn)          
+    
+```{r hetphtn, fig.cap='Comparison of Change in the Heterogeneity Measures after Fitting Meta-regression Models'}
+e<-ggplot(data=m, aes(x= perc_change, y= fct_reorder(predictor, perc_change)))+ geom_point(aes(color= heterogeneity_measure), size = 10)+geom_line(aes(group= predictor), color= 'red')+labs(x= 'Percentage Decrease', y= 'Predictors in the Model')+ geom_text(aes(label=perc_change))+scale_x_continuous(limits = c(-10, 120))+theme_classic()
+e
+```
+    
+        
+## Analysis of Publication Bias       
+    
+```{r funnel, fig.cap='Funnel Plot'}
+funnel.rma(model_1)
+a<-regtest(model_1)
+```
+    
+Figure \@ref(fig:funnel) shows the funnel plot of the model. There was no obvious asymmetry in the plot. Formal test for plot asymmetery (regression test) was conducted and it was not statistically significant (*P* value = `r pvalue(a$pval)`), confirming the visual assessment of the funnel plot.     
+                        
+## Sex-Specific Prevalences of Prehypertension in Nigeria       
+    
+As shown in figure \@ref(fig:model4), males have higher prehypertension prevalence of `r round(sex[2,1]*100, digits = 1)`% (95% CI: `r round(sex[2,2]*100, digits = 1)`%-`r round(sex[2,3]*100, digits = 1)`%) than females with prevalence of `r round(sex[1,1]*100, digits = 1)`% (95% CI: `r round(sex[1,2]*100, digits = 1)`%-`r round(sex[1,3]*100, digits = 1)`%). The difference is not statistically significant (*P* = `r pvalue(model_4_v$QMp)`)     
+    
+```{r model4, fig.cap='Prevalence of Prehypertension in Males and Females'}
+rainforest(model_4, study_labels = data_xy$study_id, group = cal_xy$gender, xlab= 'Prevalence', type= 'summary_only', text_size = 2.4, annotate_CI = TRUE, x_trans_function = transf.iarcsin)
+```    
+      
+  
+## Prevalence of Prehypertension in Nigeria by Geo-political Region       
+    
+Figure \@ref(fig:model2) shows pooled prehypertension prevalences by geo-political zones in Nigeria. The region with the lowest prehypertension prevalence is North-East at `r map_text[2, 2]`. The region with the highest prevalence of prehypertension is North-West at `r map_text[3, 2]`. The *P* value of the model is `r pvalue(model_2_v$QMp)` indicating a statistically significant difference in prevalence of prehypertension across the 6 geo-political regions in the country.    
+
+```{r model2, fig.cap='Forest Plot and Map of prevalence of Prehypertension by region'}
+forst_plot<-rainforest(model_2, group = data_cal_reg$region, xlab= 'Prevalence', type= 'summary_only', text_size = 2.3, summary_name= c('North-Central','North-East', 'North-West', 'South-East', 'South-South', 'South-West'), annotate_CI = TRUE, x_trans_function = transf.iarcsin)
+regions_data<-nigeria_data %>% group_by(region) %>% summarise('Numb' = n())
+prev<- c(round(map_text[1,1]*100, digits = 0),round(map_text[2,1]*100, digits = 0), round(map_text[3,1]*100, digits = 0), round(map_text[4,1]*100, digits = 0), round(map_text[5,1]*100, digits = 0), round(map_text[6,1]*100, digits = 0))
+prev<-data.frame(prev)
+prev_data<-bind_cols(regions_data, prev)
+map_prev<-ggplot()+geom_sf(mapping = aes(fill=prev), data = prev_data)+scale_fill_viridis_b('prevalence of \ndiabetes (%)')+scale_color_viridis_c()+theme_bw()
+ggarrange(forst_plot, map_prev, nrow = 2)
+```    
+    
+## Difference in Prevalence of Prehypertension between Urban and Rural Settlements in Nigeria        
+    
+As figure \@ref(fig:model3) shows The pooled prevalence in rural settings is `r round((transf.iarcsin(model_3$beta[1, ])), digits = 2)*100`% whereas the pooled prevalence for urban settings is `r round((transf.iarcsin(model_3$beta[2, ])), digits = 2)*100`% The difference is not statistically significant (*P* = `r pvalue(model_3_v$QMp)`)    
+    
+```{r model3, fig.cap='forest plot of prevalence by rural and urban settlements'}
+rainforest(model_3, summary_name= c('Rural','Urban'), annotate_CI = TRUE, group = data_cal_tidy_ur$settlement, xlab= 'Prevalence',  type= 'summary_only', x_trans_function = transf.iarcsin, text_size = 2.3)
+```    
+    
+# DISCUSSION        
+    
+The pooled estimate of prehypertension prevalence in Nigeria found by this study, `r round((transf.iarcsin(model_1$beta)), digits = 2)*100`% (95% CI: `r round((transf.iarcsin(model_1$ci.lb)), digits = 2)*100`%-`r round((transf.iarcsin(model_1$ci.ub)), digits = 2)*100`%), is similar to but more precise than the prevalence of 30.9% (95% CI: 22.0%-39.7%) found in a recent meta-analysis in the country @adeloyePrevalenceAwarenessTreatment2021. The reason for this disparity in precision is explained by the difference in the number of studies and individuals included in the two meta-analyses; our analysis involves larger number of studies and individuals explaining the higher precision of our estimate. It is of note that prehypertension and hypertension have almost the same prevalence [@adeloyePrevalenceAwarenessTreatment2021]. This essentially means that two-thirds of adult Nigerians have abnormal blood pressures and are at high risk of developing endpoint cardiovascular events like stroke, coronory heart disease and chronic kidney disease.       
+    
+Analysis of heterogeneity in this study reveals different behaviours for the two measures of heterogeneity; I^2^ and tau^2^. The former is known to be sensitive to the size of studies i.e. if the included studies are fairly large then the sampling error will be close to zero and I^2^ as a ratio will approach 100%[@harrerDoingMetaAnalysisHandsOn2021]. To measure,  with a precision of 0.05 and 95% confidence interval, a prehypertension prevalence of  `r round((transf.iarcsin(model_1$beta)), digits = 2)*100`% found in this study, the minimum sample size required is 345[@epitoolsEpitoolsSampleSize]. The studies included in this meta-analysis are, by the selection criteria, relatively large with sample sizes having an interquartile range of `r IQR(data_settl$sample_sz)`. Consequently,  I^2^ might be closer to 100% even if the between study heterogeneity is not substantial. This is likely the case as a metaregression with a single predictor (region where the study is carried out) reduced the tau^2^ by  `r round((model_1$tau2-model_2_v$tau2)/model_1$tau2*100, digits = 0)`% while leaving I^2^ barely changed (Figure \@ref(fig:het) ).  
+    
+The burden of prehypertension in Nigeria is higher than what was found in United States[@boothTrendsPrehypertensionHypertension2017] and Canada [@joffresHypertensionPrevalenceAwareness2013], similar to what was found in China [@jinIncidenceRiskFactors2013], Iran [@afsargharehbaghHypertensionPreHypertensionIranian2019] and Nepal [@huangPrevalenceHypertensionPrehypertension2019] and lower than what was found in Ghana [@dosooPrevalenceHypertensionMiddle2019], India [@tripathyAlarminglyHighPrevalence2017] and England[@joffresHypertensionPrevalenceAwareness2013]  (Figure \@ref(fig:discussion)). 
+    
+```{r discussion, fig.cap='Prevalence of Prehypertension in Selected Countries'}
+disc<-read.csv('C:\\Users\\Musa Bashir\\Documents\\prevalence_of_prehypertension_in_nigeria\\discussion_data.csv')
+ggplot(data=disc, aes(x= prevalence, y= fct_reorder(country, prevalence)))+ geom_point(color='green', size= 7)+geom_segment(aes(x=0, xend=prevalence, y= fct_reorder(country, prevalence), yend=fct_reorder(country, prevalence)), color='blue', size=1.5)+theme_bw()+labs(x='Prevalence(%)', y= 'Country')
+settl_prec<-data.frame(lower = model_3$ci.lb, upper = model_3$ci.ub)
+```
+    
+The higher prevalence of prehypertension in males compared to females found in this study(`r round(sex[2,1]*100, digits = 1)`% vs `r round(sex[1,1]*100, digits = 1)`%) is consistent with global trend as found in another meta-analysis of published literature world-wide[@guoPrevalenceHeterogeneityPrehypertension2012]. The higher prevalence of prehypertesion in males was also found in Nepal (31.6% vs 20.0%)[@huangPrevalenceHypertensionPrehypertension2019], India (47.3% vs 35.1%)[@tripathyAlarminglyHighPrevalence2017], England(53.5% vs 35%), Canada(32.9% vs 21.6%) and United States(42.7% vs 29.3%)[@joffresHypertensionPrevalenceAwareness2013].         
+    
+The higher prevalence of prehypertension in urban compared to rural settlements in Nigeria (`r round((transf.iarcsin(model_3$beta[1, ])), digits = 2)*100`% vs `r round((transf.iarcsin(model_3$beta[2, ])), digits = 2)*100`%) is in contrast to what was found in a 2017 Nationwide Survey which found a higher prevalence of prehypertension in rural areas (37.5% vs 24.7%)[@odiliPrevalenceAwarenessTreatment]. However, consideing the overlapping confidence intervals of the pooled prevalences in rural and urban areas (`r round((transf.iarcsin(settl_prec[1, 1])), digits = 2)*100`%-`r round((transf.iarcsin(settl_prec[1, 2])), digits = 2)*100`% and `r round((transf.iarcsin(settl_prec[2, 1])), digits = 2)*100`% -`r round((transf.iarcsin(settl_prec[2, 2])), digits = 2)*100`%) respectively), the survey's finding are plausibe under this meta-analytic model. This high prevalence in rural settings may be part of the trend in urbanization of Nigerian rural areas with adoption of lifestlyes fueling rise in non-communicable disease[@odiliPrevalenceAwarenessTreatment]. This higher prevalence  of prehypertension in rural vs urban areas was also found in Nepal (40.4% vs 29.3%)[@huangPrevalenceHypertensionPrehypertension2019] and India (41.3% vs 40.2%)[@tripathyAlarminglyHighPrevalence2017].        
+    
+Out of the six geo-political regions in the country, the three regions with highest prevalence of prehypertension, in descending order are north-west(`r map_text[3, 2]`), south-south (`r map_text[5, 2]`) and south-west(`r map_text[6, 2]`) with the north-east having the lowest prevalence among the six regions(`r map_text[2, 2]`). However, only the south-west and north-east prevalence estimates have relatively narrow confidence interval with the estimates of the remaining regions having wide confidence intervals (Figure \@ref(fig:model2)). The high ranking of south-western and south-southern regions is similar to Nationwide survery earlier mentioned[@odiliPrevalenceAwarenessTreatment]. 
+    
+# SUMMARY AND CONCLUSION            
+    
+`r round((transf.iarcsin(model_1$beta)), digits = 2)*100`% (95% CI: `r round((transf.iarcsin(model_1$ci.lb)), digits = 2)*100`%-`r round((transf.iarcsin(model_1$ci.ub)), digits = 2)*100`%) of adult Nigerians or `r round(transf.iarcsin(model_1$beta)*120, digits = 1)` million adult Nigerians have prehypertension. Males have higher prehypertension prevalence of `r round(sex[2,1]*100, digits = 1)`% (95% CI: `r round(sex[2,2]*100, digits = 1)`%-`r round(sex[2,3]*100, digits = 1)`%) than females with prevalence of `r round(sex[1,1]*100, digits = 1)`% (95% CI: `r round(sex[1,2]*100, digits = 1)`%-`r round(sex[1,3]*100, digits = 1)`%).  The region with the lowest prehypertension prevalence is North-East at `r map_text[2, 2]`. The region with the highest prevalence of prehypertension is North-West at `r map_text[3, 2]`. The pooled prevalence in rural settlements is `r round((transf.iarcsin(model_3$beta[1, ])), digits = 2)*100`% whereas the pooled prevalence for urban settlements is `r round((transf.iarcsin(model_3$beta[2, ])), digits = 2)*100`%. Differences between sexes and between rural and urban settlements were not statistically significant. However, differences bewteen the geo-political regions are statistically significant. In conclusion, the burden of prehypertension Nigeria is high and represents a future burden of hypertension and other cardiovascular events    
+    
+# REFERENCES    
+    
+    

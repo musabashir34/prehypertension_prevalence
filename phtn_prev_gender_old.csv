@@ -1,0 +1,73 @@
+study_id,study-year,setting,state,region,gender,prehtn_count,sample_sz,age
+Isezuo et al 2011,2011,mixed,sokoto,north_west,males,242,409,41.1
+Isezuo et al 2011,2011,mixed,sokoto,north_west,females,217,373,36.1
+Ononamadu et al 2017,2016,mixed,anambra,south_east,males,198,436,NA
+Ononamadu et al 2017,2016,mixed,anambra,south_east,females,192,476,NA
+Okwounu et al 2015,2015,urban,abia,south_east,males,108,233,NA
+Okwounu et al 2015,2015,urban,abia,south_east,females,69,116,NA
+Umuerri 2020,2020,mixed,delta,south_south,males,161,376,NA
+Umuerri 2020,2020,mixed,delta,south_south,females,201,476,NA
+akinbodewa et al 2017,2017,urban,ondo,south_west,males,179,454,43
+akinbodewa et al 2017,2017,urban,ondo,south_west,females,197,729,45.8
+Yakubu 2019,2019,urban,mixed,mixed,males,1008,2441,NA
+Yakubu 2019,2019,urban,mixed,mixed,females,194,572,NA
+Nwatu et al 2017,2017,rural,enugu,south_east,males,113,286,53.3
+Nwatu et al 2017,2017,rural,enugu,south_east,females,174,538,49.9
+Dokunmu et al 2018,2018,urban,ogun,south_west,males,19,41,NA
+Dokunmu et al 2018,2018,urban,ogun,south_west,females,48,141,NA
+Ofori et al 2018,2018,rural,rivers,south_south,females,134,389,38.7
+Wokoma 2011,2011,rural,rivers,south_south,males,20,60,NA
+Wokoma 2011,2011,rural,rivers,south_south,females,35,92,NA
+Obiora et al 2012,,urban,anambra,south_east,males,12,99,NA
+Obiora et al 2012,,urban,anambra,south_east,females,12,111,NA
+Banigbe et al 2020,2020,mixed,benue,north_central,males,3052,6538,31
+Suleiman et al 2013,2013,urban,bayelsa,south_south,males,54,160,NA
+Suleiman et al 2013,2013,urban,bayelsa,south_south,females,40,240,NA
+Ibuaku et al 2018,2018,rural,delta,south_south,males,49,200,NA
+Ibuaku et al 2018,2018,rural,delta,south_south,females,55,232,NA
+Kooffreh 2016,2016,urban,cross river,south_south,males,63,150,35.4
+Kooffreh 2016,2016,urban,cross river,south_south,females,55,150,35
+Andy et al 2012,2012,rural,mixed,mixed,males,289,1652,34
+Andy et al 2012,2012,rural,mixed,mixed,females,375,2217,34.4
+Mmom 2016,2016,urban,port harcourt,south_south,females,52,201,52.3
+Raimi 2020,2020,rural,ogun,south_west,males,96,206,NA
+Raimi 2020,2020,rural,ogun,south_west,females,42,206,NA
+Ejike 2017,2017,urban,mixed,south_east,males,367,742,23.3
+Ejike 2017,2017,urban,mixed,south_east,females,313,868,22.1
+Ayodele et al 2017,2017,urban,osun,south_west,males,41,68,25.4
+Ayodele et al 2017,2017,urban,osun,south_west,females,22,63,24.7
+Shittu et al 2018 ,2018,mixed,oyo,south_west,males,1562,3417,NA
+Shittu et al 2018 ,2018,mixed,oyo,south_west,females,1343,3498,NA
+Aladeniyi et al 2017,2017,urban,ondo,south_west,males,842,2303,NA
+Aladeniyi et al 2017,2017,urban,ondo,south_west,females,914,2538,NA
+Wada et al 2020,2020,rural,osun,south_west,males,20,48,44.8
+Wada et al 2020,2020,rural,osun,south_west,females,27,90,46.6
+Tagurum et al 2015,2015,rural,plateu,north_central,males,15,43,NA
+Tagurum et al 2015,2015,rural,plateu,north_central,females,26,152,NA
+Adeoye et al 2016,2016,urban,ibadan,south_west,males,44,127,37.2
+Adeoye et al 2016,2016,urban,ibadan,south_west,females,62,225,44.7
+Adeoye et al 2018,2018,urban,ibadan,south_west,males,378,886,44.2
+Adeoye et al 2018,2018,urban,ibadan,south_west,females,426,1211,44.2
+Adamu et al 2014,2014,urban,sokoto,north_west,males,65,150,NA
+Adamu et al 2014,2014,urban,sokoto,north_west,females,43,148,NA
+Okpechi et al 2013,2013,mixed,abia,south_east,males,445,1430,41.5
+Okpechi et al 2013,2013,mixed,abia,south_east,females,298,1553,41.8
+Ajayi et al 2019,2019,urban,ekiti,south_west,females,51,426,51.7
+Abah 2014,2014,urban,plateu,north_central,males,28,57,NA
+Abah 2014,2014,urban,plateu,north_central,females,80,143,NA
+Adejumo et al 2013,2013,urban,lagos,south_west,males,56,300,48.4
+Dada 2020,2020,urban,ekiti,south_west,males,26,170,NA
+Dada 2020,2020,urban,ekiti,south_west,females,20,130,NA
+Okafor et al 2014,2014,rural,anambra,south_east,females,36,137,NA
+Adelewo 2019,2019,urban,abuja,north_central,males,59,226,NA
+Adelewo 2019,2019,urban,abuja,north_central,females,50,191,NA
+Ale et al 2014,2014,urban,lagos,south_west,males,15,34,NA
+Ale et al 2014,2014,urban,lagos,south_west,females,29,67,NA
+Charles-Davies et al 2013,2013,urban,ibadan,south_west,males,80,170,
+Charles-Davies et al 2013,2013,urban,ibadan,south_west,females,117,364,
+Olawade et al 2020,2020,rural,gombe,north_east,males,21,43,36
+Olawade et al 2020,2020,rural,gombe,north_east,females,27,35,30.5
+Egbuono et al 2015,2015,urban,abia,south_east,males,19,99,NA
+Egbuono et al 2015,2015,urban,abia,south_east,females,25,101,NA
+Haastrup et al 2019,2019,urban,abuja,north_central,males,59,226,
+Haastrup et al 2019,2019,urban,abuja,north_central,females,50,191,

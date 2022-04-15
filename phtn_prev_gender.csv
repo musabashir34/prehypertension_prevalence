@@ -1,0 +1,21 @@
+study_id,study-year,setting,state,region,gender,prehtn_count,sample_sz,age
+Isezuo et al 2011,2011,mixed,sokoto,north_west,males,242,409,41.1
+Isezuo et al 2011,2011,mixed,sokoto,north_west,females,217,373,36.1
+Umuerri 2020,2020,mixed,delta,south_south,males,161,376,NA
+Umuerri 2020,2020,mixed,delta,south_south,females,201,476,NA
+Nwatu et al 2017,2017,rural,enugu,south_east,males,113,286,53.3
+Nwatu et al 2017,2017,rural,enugu,south_east,females,174,538,49.9
+Suleiman et al 2013,2013,urban,bayelsa,south_south,males,54,160,NA
+Suleiman et al 2013,2013,urban,bayelsa,south_south,females,40,240,NA
+Kooffreh 2016,2016,urban,cross river,south_south,males,63,150,35.4
+Kooffreh 2016,2016,urban,cross river,south_south,females,55,150,35
+Andy et al 2012,2012,rural,mixed,south_south,males,289,1652,34
+Andy et al 2012,2012,rural,mixed,south_south,females,375,2217,34.4
+Raimi 2020,2020,rural,ogun,south_west,males,96,206,NA
+Raimi 2020,2020,rural,ogun,south_west,females,42,206,NA
+Tagurum et al 2015,2015,rural,plateu,north_central,males,15,43,NA
+Tagurum et al 2015,2015,rural,plateu,north_central,females,26,152,NA
+Okpechi et al 2013,2013,mixed,abia,south_east,males,445,1430,41.5
+Okpechi et al 2013,2013,mixed,abia,south_east,females,298,1553,41.8
+Charles-Davies et al 2013,2013,urban,ibadan,south_west,males,80,170,NA
+Charles-Davies et al 2013,2013,urban,ibadan,south_west,females,117,364,NA
